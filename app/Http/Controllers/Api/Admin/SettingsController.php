@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Helper\ResponseUtils;
+use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\Settings;
 use Illuminate\Http\Request;

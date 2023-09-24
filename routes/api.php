@@ -665,7 +665,7 @@ Route::middleware(["mid_res"])
             Route::get('/user/community/person_chat/{user_id}', 'App\Http\Controllers\Api\Admin\AdminMessageController@getLatestMessage')->middleware('user_auth', 'permission_admin');
 
             //Set discount and update discount bill pay
-            Route::resource('settings', App\Http\Controllers\SettingsController::class)->middleware('user_auth', 'permission_admin');
+            Route::resource('settings', App\Http\Controllers\Api\Admin\SettingsController::class)->middleware('user_auth', 'permission_admin');
         });
 
         // Route for Wallet Transaction Bank List
