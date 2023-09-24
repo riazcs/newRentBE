@@ -523,7 +523,8 @@ class WalletTransactionController extends Controller
 
     public function contactBillByWallet()
     {
-        $isHost = User::where(['is_host' => 1, 'id' => request('user_id')])->first();
+        $userId = \auth()->user()->id;
+        $isHost = User::where(['is_host' => 1, 'id' => $userId])->first();
         if ($isHost == null) {
             return ResponseUtils::json([
                 'success' => false,
@@ -535,12 +536,12 @@ class WalletTransactionController extends Controller
         if ($commissionPer && $commissionPer->code_value) {
             $renterBill = $isHost->golden_coin - ($isHost->golden_coin * ($commissionPer->code_value / 100));
             $uCmmission = $isHost->golden_coin * ($commissionPer->code_value / 100);
-            $wUser = WalletTransaction::where(['user_id' => request('user_id')])->first();
+            $wUser = WalletTransaction::where(['user_id' => $userId])->first();
 
             if ($wUser) {
                 DB::beginTransaction();
                 try {
-                    $user_id = request('user_id');
+                    $user_id = $userId;
                     $virtual_account = VirtualAccount::query()
                         ->where('user_id', $user_id)
                         ->first();
@@ -653,7 +654,7 @@ class WalletTransactionController extends Controller
                         "account_number" => $virtual_account->bank_account_no,
                         "bank_account_holder_name" => $virtual_account->bank_account_name,
                         "bank_name" => $virtual_account->bank_code,
-                        "deposit_money" => request('deposit_money'),
+                        "deposit_money" => request('bill_amount'),
                         "deposit_trading_code" => Helper::generateTransactionID(),
                         "deposit_date_time" => Helper::getTimeNowString(),
                         "deposit_content" => request()->deposit_content ?? null,
