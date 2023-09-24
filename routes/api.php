@@ -666,6 +666,9 @@ Route::middleware(["mid_res"])
 
             //Set discount and update discount bill pay
             Route::resource('settings', App\Http\Controllers\Api\Admin\SettingsController::class)->middleware('user_auth', 'permission_admin');
+
+            Route::post('contact_bill_by_wallet', 'App\Http\Controllers\Api\Admin\WalletTransactionController@contactBillByWallet')->middleware('user_auth', 'permission_admin');
+            Route::post('montly_room_rent_bill_by_wallet', 'App\Http\Controllers\Api\Admin\WalletTransactionController@montlyRoomBillByWallet')->middleware('user_auth', 'permission_admin');
         });
 
         // Route for Wallet Transaction Bank List
