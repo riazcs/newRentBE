@@ -35,6 +35,7 @@ use App\Models\HistoryPotentialUser;
 use App\Models\PersonChats;
 use App\Models\PotentialUser;
 use App\Models\ServiceCloseChild;
+use App\Models\Settings;
 use App\Models\Tower;
 use Exception;
 
@@ -1205,6 +1206,17 @@ class ContractController extends Controller
         }
 
         if ($request->status == StatusContractDefineCode::COMPLETED) {
+
+            //add master golden  coin
+            $commissionPer = Settings::where('type', 'bill')->first();
+            $user = User::where('id', $contractExists->user_id)->first();
+            $contact = Contract::where('user_id', $user->id)->first();
+            $resultMoney = $user->golden_coin - $contact->deposit_money;
+            $master_coins = $user->golden_coin - $contact->deposit_money* (100 - $commissionPer->code_value) / 100;
+
+            $user->golden_coin = $master_coins;
+            $user->save();
+            
             foreach ($listRenter as $renter) {
                 // handle noti
                 NotificationUserJob::dispatch(

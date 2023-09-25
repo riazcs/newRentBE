@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\NotificationUserJob;
 use App\Models\Contract;
 use App\Models\MsgCode;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -255,6 +256,11 @@ class ContractController extends Controller
         // setup notifications
         $motelExist = DB::table('motels')->where('id', $contractExists->motel_id)->first();
         if ($request->is_confirmed == StatusContractDefineCode::WAITING_CONFIRM) {
+
+            $user = User::where('id', $contractExists->user_id)->first();
+            $contact = Contract::where('user_id', $user->id)->first();
+            $resultMoney = $user->golden_coin - $contact->deposit_money;
+            
             NotificationUserJob::dispatch(
                 $contractExists->user_id,
                 "Xác nhận hợp đồng và tiền cọc",
