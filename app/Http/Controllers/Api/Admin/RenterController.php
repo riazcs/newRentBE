@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MsgCode;
 use App\Models\PotentialUser;
 use App\Models\Renter;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -579,6 +580,48 @@ class RenterController extends Controller
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
             'data' => $masters
+        ]);
+    }
+
+    public function createKYC(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $renterExist = User::where(['user_id' => \auth()->user()->id])->first();
+            $renterRes = Renter::create([
+                "name" => $request->name ?: $renterExist->name,
+                "phone_number" => $request->phone_number ?: $renterExist->phone_number,
+                "email" => $request->email ?: $renterExist->email,
+                "cmnd_number" => $request->cmnd_number ?: $renterExist->cmnd_number,
+                "cmnd_front_image_url" => $request->cmnd_front_image_url ?: $renterExist->cmnd_front_image_url,
+                "cmnd_back_image_url" => $request->cmnd_back_image_url ?: $renterExist->cmnd_back_image_url,
+                "address" => $request->address ,
+                "image_url" => $request->image_url ,
+                "is_hidden" => false,
+                "date_of_birth" => $request->date_of_birth ?: $renterExist->date_of_birth,
+                "date_range" => $request->date_range ,
+                "sex" => $request->sex ?: $renterExist->sex,
+                "price_expected" => $request->price_expected ,
+                "deposit_expected" => $request->deposit_expected ,
+                "motel_name" => $request->motel_name ,
+                "name_tower_expected" => $request->name_tower_expected ,
+                "name_motel_expected" => $request->name_motel_expected ,
+                "estimate_rental_date" => $request->estimate_rental_date ,
+                "job" => $request->job ,
+                "type" => $renterExist->is_host,
+                "type_from" => $request->type_from ,
+            ]);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+        }
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $renterRes,
         ]);
     }
 }
