@@ -610,6 +610,7 @@ class RenterController extends Controller
                 "job" => $request->job ,
                 "type" => $renterExist->is_host,
                 "type_from" => $request->type_from ,
+                "kyc_status" => $request->kyc_status ,
             ]);
             DB::commit();
         } catch (Exception $e) {

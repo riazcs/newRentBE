@@ -4,30 +4,22 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMoneyMinMaxMoPostsTable extends Migration
+class AddKycStatusRentersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
-        Schema::table('mo_posts', function (Blueprint $table) {
-            $table->double('min_money')->nullable()->default(0)->after('money');
-            $table->double('max_money')->nullable()->default(0)->after('min_money');
+        Schema::table('renters', function (Blueprint $table) {
+            $table->boolean("kyc_status")->nullable()->default(0);
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+
     public function down()
     {
-        Schema::table('mo_posts', function (Blueprint $table) {
-            //
+        Schema::table('renters', function (Blueprint $table) {
+            $table->drop('kyc_status');
         });
     }
 }
