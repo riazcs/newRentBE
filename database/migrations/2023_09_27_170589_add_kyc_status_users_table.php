@@ -4,12 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddKycStatusRentersTable extends Migration
+class AddKycStatusUsersTable extends Migration
 {
 
     public function up()
     {
-        Schema::table('renters', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->boolean("kyc_status")->nullable()->default(0);
 
         });
@@ -18,7 +18,7 @@ class AddKycStatusRentersTable extends Migration
 
     public function down()
     {
-        Schema::table('renters', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->drop('kyc_status');
         });
     }

@@ -587,7 +587,7 @@ class RenterController extends Controller
     {
         DB::beginTransaction();
         try {
-            $renterExist = User::where(['user_id' => \auth()->user()->id])->first();
+            $renterExist = User::where(['id' => \auth()->user()->id])->first();
             $renterRes = Renter::create([
                 "name" => $request->name ?: $renterExist->name,
                 "phone_number" => $request->phone_number ?: $renterExist->phone_number,
@@ -595,24 +595,29 @@ class RenterController extends Controller
                 "cmnd_number" => $request->cmnd_number ?: $renterExist->cmnd_number,
                 "cmnd_front_image_url" => $request->cmnd_front_image_url ?: $renterExist->cmnd_front_image_url,
                 "cmnd_back_image_url" => $request->cmnd_back_image_url ?: $renterExist->cmnd_back_image_url,
-                "address" => $request->address ,
-                "image_url" => $request->image_url ,
+                "address" => $request->address,
+                "image_url" => $request->image_url,
                 "is_hidden" => false,
                 "date_of_birth" => $request->date_of_birth ?: $renterExist->date_of_birth,
-                "date_range" => $request->date_range ,
+                "date_range" => $request->date_range,
                 "sex" => $request->sex ?: $renterExist->sex,
-                "price_expected" => $request->price_expected ,
-                "deposit_expected" => $request->deposit_expected ,
-                "motel_name" => $request->motel_name ,
-                "name_tower_expected" => $request->name_tower_expected ,
-                "name_motel_expected" => $request->name_motel_expected ,
-                "estimate_rental_date" => $request->estimate_rental_date ,
-                "job" => $request->job ,
+                "price_expected" => $request->price_expected,
+                "deposit_expected" => $request->deposit_expected,
+                "motel_name" => $request->motel_name,
+                "name_tower_expected" => $request->name_tower_expected,
+                "name_motel_expected" => $request->name_motel_expected,
+                "estimate_rental_date" => $request->estimate_rental_date,
+                "job" => $request->job,
                 "type" => $renterExist->is_host,
-                "type_from" => $request->type_from ,
-                "kyc_status" => $request->kyc_status ,
+                "type_from" => $request->type_from,
+
             ]);
             DB::commit();
+            if ($renterExist) {
+                $renterExist->update([
+                    "kyc_status" => 1
+                ]);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
@@ -623,6 +628,28 @@ class RenterController extends Controller
             'msg_code' => MsgCode::SUCCESS[0],
             'msg' => MsgCode::SUCCESS[1],
             'data' => $renterRes,
+        ]);
+    }
+
+    public function getKYCbyUserId()
+    {
+        $renterExist = User::where(['id' => \auth()->user()->id, 'kyc_status' => 1])->first();
+
+        if ($renterExist == null) {
+            return ResponseUtils::json([
+                'code' => Response::HTTP_BAD_REQUEST,
+                'success' => false,
+                'msg_code' => "NOTFOUND",
+                'msg' => MsgCode::NO_USER_EXISTS[1],
+            ]);
+        }
+
+        return ResponseUtils::json([
+            'code' => Response::HTTP_OK,
+            'success' => true,
+            'msg_code' => MsgCode::SUCCESS[0],
+            'msg' => MsgCode::SUCCESS[1],
+            'data' => $renterExist,
         ]);
     }
 }

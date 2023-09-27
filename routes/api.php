@@ -670,6 +670,7 @@ Route::middleware(["mid_res"])
             Route::post('contact_bill_by_wallet', 'App\Http\Controllers\Api\Admin\WalletTransactionController@contactBillByWallet')->middleware('user_auth', 'permission_admin');
             Route::post('montly_room_rent_bill_by_wallet', 'App\Http\Controllers\Api\Admin\WalletTransactionController@montlyRoomBillByWallet')->middleware('user_auth', 'permission_admin');
             Route::post('/create_kyc', 'App\Http\Controllers\Api\Admin\RenterController@createKYC')->middleware('user_auth', 'permission_admin');
+            Route::get('/getKYCByUser', 'App\Http\Controllers\Api\Admin\RenterController@getKYCbyUserId')->middleware('user_auth', 'permission_admin');
         });
 
         // Route for Wallet Transaction Bank List
