@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Post;
+use App\Models\MoPost;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -42,7 +42,7 @@ class PostStatusUpdateCommand extends Command
     {
         $twoWeeksAgo = Carbon::now()->subWeeks(2);
 
-        $postsToHide = Post::where('status', true)
+        $postsToHide = MoPost::where('status', true)
             ->where('created_at', '<', $twoWeeksAgo)
             ->get();
 
@@ -61,7 +61,7 @@ class PostStatusUpdateCommand extends Command
 
         $threeWeeks = Carbon::now()->subWeeks(3);
 
-        $postsToHide = Post::where('status', true)
+        $postsToHide = MoPost::where('status', true)
             ->where('created_at', '<', $threeWeeks)
             ->get();
 
@@ -77,7 +77,7 @@ class PostStatusUpdateCommand extends Command
                 NotiUserDefineCode::USER_NORMAL,
                 $post->id,
             );
-            $post->delete();
+            $post->update(['status' => 0]);
         }
     }
 }
