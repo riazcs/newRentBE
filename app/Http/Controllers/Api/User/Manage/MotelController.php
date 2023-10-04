@@ -844,20 +844,33 @@ class MotelController extends Controller
                     ]);
                 }
 
-                DB::beginTransaction();
-                try {
-                    MoService::create([
-                        "motel_id" => $motel_created->id,
-                        "service_name"  => $moServiceItem['service_name'],
-                        "service_icon"  => $moServiceItem['service_icon'] ?? '',
-                        "service_unit"  => $moServiceItem['service_unit'] ?? '',
-                        "service_charge" => $moServiceItem['service_charge'],
-                        "note" => $moServiceItem['note'] ?? null,
-                        "type_unit" => $moServiceItem['type_unit'],
+                if (
+                    !empty($motel_created->id) && !empty($moServiceItem['service_name'])  && !empty($moServiceItem['service_icon'])
+                    && !empty($moServiceItem['service_unit'])  && !empty($moServiceItem['service_charge'])
+                ) {
+
+                    DB::beginTransaction();
+                    try {
+                        MoService::create([
+                            "motel_id" => $motel_created->id,
+                            "service_name"  => $moServiceItem['service_name'],
+                            "service_icon"  => $moServiceItem['service_icon'] ?? '',
+                            "service_unit"  => $moServiceItem['service_unit'] ?? '',
+                            "service_charge" => $moServiceItem['service_charge'],
+                            "note" => $moServiceItem['note'] ?? null,
+                            "type_unit" => $moServiceItem['type_unit'],
+                        ]);
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                    }
+                } else {
+                    return ResponseUtils::json([
+                        'code' => Response::HTTP_BAD_REQUEST,
+                        'success' => false,
+                        'msg_code' => "ERROR",
+                        'msg' => "ALL FIELD REQUIRED",
                     ]);
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollBack();
                 }
             }
         }
