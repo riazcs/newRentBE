@@ -200,6 +200,13 @@ class MoPostController extends Controller
             ->when($request->search != null, function ($query) use ($request) {
                 $query->search($request->search, null, true, true);
             })
+            ->when($request->search != null, function ($query) use ($request) {
+                $query->where('province_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('district_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('wards_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('motel_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('title', 'like', '%' . $request->search . '%');
+            })
             ->select('mo_posts.*')
             ->paginate($limit);
 
@@ -740,7 +747,7 @@ class MoPostController extends Controller
             'id',
             $request->motel_id
         )->where('user_id', $request->user->id)
-           ->orderBy('updated_at', 'asc')
+            ->orderBy('updated_at', 'asc')
             ->first();
 
         // if ($motelExist == null) {
